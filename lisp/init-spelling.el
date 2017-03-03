@@ -47,7 +47,8 @@
               font-lock-function-name-face
               font-lock-builtin-face
               rjsx-tag
-              rjsx-attr))))
+              rjsx-attr))
+    t))
 (put 'js2-mode 'flyspell-mode-predicate 'js-flyspell-verify)
 (put 'rjsx-mode 'flyspell-mode-predicate 'js-flyspell-verify)
 ;; }}
@@ -118,15 +119,14 @@ Please note RUN-TOGETHER will make aspell less capable. So it should only be use
 (setq-default ispell-extra-args (flyspell-detect-ispell-args t))
 ;; (setq ispell-cmd-args (flyspell-detect-ispell-args))
 (defadvice ispell-word (around my-ispell-word activate)
-  (let ((old-ispell-extra-args ispell-extra-args))
+  (let* ((old-ispell-extra-args ispell-extra-args))
     (ispell-kill-ispell t)
     ;; use emacs original arguments
     (setq ispell-extra-args (flyspell-detect-ispell-args))
     ad-do-it
     ;; restore our own ispell arguments
     (setq ispell-extra-args old-ispell-extra-args)
-    (ispell-kill-ispell t)
-    ))
+    (ispell-kill-ispell t)))
 
 (defadvice flyspell-auto-correct-word (around my-flyspell-auto-correct-word activate)
   (let* ((old-ispell-extra-args ispell-extra-args))
@@ -138,10 +138,15 @@ Please note RUN-TOGETHER will make aspell less capable. So it should only be use
     (setq ispell-extra-args old-ispell-extra-args)
     (ispell-kill-ispell t)))
 
-(defun text-mode-hook-setup ()
+(defun text-mode-hook-spelling-setup ()
   ;; Turn off RUN-TOGETHER option when spell check text-mode
   (setq-local ispell-extra-args (flyspell-detect-ispell-args)))
-(add-hook 'text-mode-hook 'text-mode-hook-setup)
+(add-hook 'text-mode-hook 'text-mode-hook-spelling-setup)
+
+(defun prog-mode-hook-spelling-setup ()
+  ;; Turn off RUN-TOGETHER option when spell check text-mode
+  (setq-local ispell-extra-args (flyspell-detect-ispell-args t)))
+(add-hook 'prog-mode-hook 'prog-mode-hook-spelling-setup)
 
 ;; Add auto spell-checking in comments for all programming language modes
 ;; if and only if there is enough memory
