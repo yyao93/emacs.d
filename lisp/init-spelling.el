@@ -145,6 +145,7 @@ Please note RUN-TOGETHER will make aspell less capable. So it should only be use
 
 (defun prog-mode-hook-spelling-setup ()
   ;; Turn off RUN-TOGETHER option when spell check text-mode
+  (setq-local flyspell-large-region nil)
   (setq-local ispell-extra-args (flyspell-detect-ispell-args t)))
 (add-hook 'prog-mode-hook 'prog-mode-hook-spelling-setup)
 
